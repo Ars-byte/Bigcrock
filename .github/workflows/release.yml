@@ -1,0 +1,83 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+          check-latest: true
+
+      - name: Determine tag name
+        id: vars
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG="v1.0.0"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Run tests
+        run: |
+          go test -v ./...
+
+      - name: Build binary
+        run: |
+          go mod tidy
+          CGO_ENABLED=0 go build -ldflags="-s -w -X bigcrock/src.Version=${{ steps.vars.outputs.tag }}" -o bigcrock.bin .
+          chmod +x bigcrock.bin
+
+      - name: Create tarball
+        run: |
+          mkdir -p dist
+          cp bigcrock.bin dist/
+          cp README.md dist/ 2>/dev/null || true
+          cp README.es.md dist/ 2>/dev/null || true
+          cp LICENSE dist/ 2>/dev/null || true
+          tar -czvf bigcrock-linux-amd64.tar.gz -C dist .
+
+      - name: Generate Checksums
+        run: |
+          sha256sum bigcrock.bin bigcrock-linux-amd64.tar.gz > checksums.txt
+
+      - name: Create or Update GitHub Release
+        run: |
+          TAG="${{ steps.vars.outputs.tag }}"
+          printf '## Installation\n\n```bash\n# Download and make executable\ncurl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock.bin\nchmod +x bigcrock\n\n# Move to your PATH (optional)\nsudo mv bigcrock /usr/local/bin\n```\n' > release_notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              bigcrock.bin \
+              bigcrock-linux-amd64.tar.gz \
+              checksums.txt \
+              --clobber
+            gh release edit "$TAG" --notes-file release_notes.md
+          else
+            gh release create "$TAG" \
+              bigcrock.bin \
+              bigcrock-linux-amd64.tar.gz \
+              checksums.txt \
+              --title "Release $TAG" \
+              --notes-file release_notes.md
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
