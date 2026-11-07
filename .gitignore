@@ -1,0 +1,16 @@
+# Binaries and build artifacts
+bigcrock
+bigcrock.bin
+*.bin
+*.exe
+*.test
+*.out
+*.tar.gz
+main
+
+# IDEs and OS files
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
