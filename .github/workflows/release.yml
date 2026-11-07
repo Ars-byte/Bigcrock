@@ -44,13 +44,13 @@ jobs:
       - name: Build binary
         run: |
           go mod tidy
-          CGO_ENABLED=0 go build -ldflags="-s -w -X bigcrock/src.Version=${{ steps.vars.outputs.tag }}" -o bigcrock.bin .
-          chmod +x bigcrock.bin
+          CGO_ENABLED=0 go build -ldflags="-s -w -X bigcrock/src.Version=${{ steps.vars.outputs.tag }}" -o bigcrock .
+          chmod +x bigcrock
 
       - name: Create tarball
         run: |
           mkdir -p dist
-          cp bigcrock.bin dist/
+          cp bigcrock dist/
           cp README.md dist/ 2>/dev/null || true
           cp README.es.md dist/ 2>/dev/null || true
           cp LICENSE dist/ 2>/dev/null || true
@@ -58,22 +58,22 @@ jobs:
 
       - name: Generate Checksums
         run: |
-          sha256sum bigcrock.bin bigcrock-linux-amd64.tar.gz > checksums.txt
+          sha256sum bigcrock bigcrock-linux-amd64.tar.gz > checksums.txt
 
       - name: Create or Update GitHub Release
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
-          printf '## Installation\n\n```bash\n# Download and make executable\ncurl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock.bin\nchmod +x bigcrock\n\n# Move to your PATH (optional)\nsudo mv bigcrock /usr/local/bin\n```\n' > release_notes.md
+          printf '## Installation\n\n```bash\n# Download and make executable\ncurl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock\nchmod +x bigcrock\n\n# Move to your PATH (optional)\nsudo mv bigcrock /usr/local/bin\n```\n' > release_notes.md
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" \
-              bigcrock.bin \
+              bigcrock \
               bigcrock-linux-amd64.tar.gz \
               checksums.txt \
               --clobber
             gh release edit "$TAG" --notes-file release_notes.md
           else
             gh release create "$TAG" \
-              bigcrock.bin \
+              bigcrock \
               bigcrock-linux-amd64.tar.gz \
               checksums.txt \
               --title "Release $TAG" \

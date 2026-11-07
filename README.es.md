@@ -48,7 +48,7 @@
 
 ### Descargar binario
 ```bash
-curl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock.bin
+curl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock
 chmod +x bigcrock
 sudo mv bigcrock /usr/local/bin/
 ```
