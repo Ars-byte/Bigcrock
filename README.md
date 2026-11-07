@@ -2,31 +2,28 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?style=flat&logo=go)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/Ars-byte/bigcrock?color=brightgreen)](https://github.com/Ars-byte/bigcrock/releases)
+[![Release](https://img.shields.io/github/v/release/Ars-byte/Bigcrock?color=brightgreen)](https://github.com/Ars-byte/Bigcrock/releases)
 
 > **Language / Idioma**: **English** | [Español](README.es.md)
 
-**bigcrock** is a fast, lightweight, Ranger-inspired terminal directory tree analyzer and disk usage ranker built in Go using [Bubble Tea](https://github.com/charmbracelet/bubbletea) and [Lip Gloss](https://github.com/charmbracelet/lipgloss).
+**bigcrock** is a fast, minimalist, Ranger-inspired terminal directory tree analyzer and disk usage ranker written in Go.
 
-It scans your directories and ranks them by size, showing at a glance which folders and hidden directories (like `.local`, `.cache`, etc.) consume the most space.
+---
+
+## Preview
+
+![bigcrock preview](preview/preview.png)
 
 ---
 
 ## Features
 
-- **Ranger-Style Miller Columns**:
-  - **Left column**: Parent directory context.
-  - **Center column**: Active directory entries ranked by disk space usage with size badges and percentage progress bars.
-  - **Right column**: Deep inspector with top subdirectory breakdown, largest files, metadata, and preview.
-- **Top Space Consumers Ranking**: Instantly displays folders ranked from heaviest to lightest (`#1`, `#2`, `#3`...).
-- **Hidden Directories Included**: Easily inspect hidden folders such as `.local`, `.config`, `.cache` (toggleable with `.` or `H`).
-- **Interactive Tree Navigation**: Drill down into any directory or subdirectory (`Enter` / `l` / `→`) and navigate back (`←` / `h` / `Backspace`).
-- **Non-Blocking Background Scanning**: Asynchronous concurrent size calculation keeps the UI smooth and responsive even across massive file hierarchies.
-- **Intelligent In-Memory Cache**: Instant navigation when returning to previously scanned directories.
-- **Dual Language Support**: Switch between English and Spanish seamlessly in-app using `Tab` or `t`.
-- **Multiple Sort Modes**: Sort by size descending, size ascending, alphabetical, or items count (`s`).
-- **About Screen**: Clean, borderless project view (`?` or `a`).
-- **Modular Architecture**: Built with clean package separation modeled after the Crayoz project.
+- **Miller Columns**: 3-panel Ranger-style view with responsive auto-resizing.
+- **Disk Usage Ranking**: Top space consumers ranked from largest to smallest.
+- **Hidden Items**: Full visibility into `.local`, `.cache`, and hidden directories.
+- **Low Resource Usage**: Bounded background scanner keeps CPU and disk I/O minimal.
+- **Minimalist TUI**: Clean monochrome grayscale interface with zero visual clutter.
+- **Bilingual**: Instant English and Spanish toggle (`Tab` / `t`).
 
 ---
 
@@ -34,51 +31,38 @@ It scans your directories and ranks them by size, showing at a glance which fold
 
 | Key | Action |
 | --- | --- |
-| `↑` / `k` | Move cursor up |
-| `↓` / `j` | Move cursor down |
-| `Enter` / `→` / `l` | Enter selected directory |
-| `←` / `h` / `Backspace` | Go up to parent directory |
-| `Home` / `g` | Jump to top (#1 heaviest item) |
-| `End` / `G` | Jump to bottom item |
-| `PgUp` / `PgDn` | Scroll page up / page down |
-| `s` | Cycle sort mode (Size ↓ / Size ↑ / Name A-Z / Name Z-A / Items Count) |
-| `.` / `H` | Toggle hidden files and directories |
-| `r` | Force refresh and recalculate sizes |
-| `Tab` / `t` | **Toggle language (English ↔ Español)** |
-| `?` / `a` | **Show About screen** |
-| `Any key` | Return from About screen |
-| `q` / `Ctrl+C` | Quit application |
+| `k` / `j` | Move cursor up / down |
+| `l` / `Enter` | Enter directory |
+| `h` / `Backspace` | Up to parent directory |
+| `g` / `G` | Jump to top (#1 heaviest) / bottom |
+| `s` | Cycle sort (Size / Name / Count) |
+| `.` / `H` | Toggle hidden items |
+| `r` | Rescan directory |
+| `Tab` / `t` | Toggle language (EN ↔ ES) |
+| `?` / `a` | About modal |
+| `q` | Quit |
 
 ---
 
-## Installation & Build
+## Installation
 
-### Requirements
-- [Go](https://go.dev/) 1.22 or higher.
-
-### Build from source
+### Pre-built Binary
 ```bash
-git clone https://github.com/Ars-byte/bigcrock.git
-cd bigcrock
-go mod download
-go build -ldflags="-s -w" -o bigcrock .
-./bigcrock
+curl -L -o bigcrock https://github.com/Ars-byte/Bigcrock/releases/latest/download/bigcrock.bin
+chmod +x bigcrock
+sudo mv bigcrock /usr/local/bin/
 ```
 
-### Usage
+### Build from Source
 ```bash
-# Analyze current directory
+git clone https://github.com/Ars-byte/Bigcrock.git
+cd Bigcrock
+go build -ldflags="-s -w" -o bigcrock .
 ./bigcrock
-
-# Analyze home directory
-./bigcrock ~
-
-# Analyze specific directory
-./bigcrock /var/log
 ```
 
 ---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE).
